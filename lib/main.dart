@@ -67,7 +67,81 @@ class _CalculatorState extends State<Calculator> {
                   )
                 ],
               ),
-            )
+            ),
+            const SizedBox(
+              height: 60,
+              width: 350,
+              child: Divider(
+                color: Colors.blue,
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                calcButton('AC', Colors.grey, Colors.black),
+                calcButton('+/-', Colors.grey, Colors.black),
+                calcButton('%', Colors.grey, Colors.black),
+                calcButton('/', Colors.amber, Colors.white),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                calcButton('7', Colors.grey, Colors.black),
+                calcButton('8', Colors.grey, Colors.black),
+                calcButton('9', Colors.grey, Colors.black),
+                calcButton('x', Colors.amber, Colors.white),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                calcButton('4', Colors.grey, Colors.black),
+                calcButton('5', Colors.grey, Colors.black),
+                calcButton('6', Colors.grey, Colors.black),
+                calcButton('-', Colors.amber, Colors.white),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                calcButton('1', Colors.grey, Colors.black),
+                calcButton('2', Colors.grey, Colors.black),
+                calcButton('3', Colors.grey, Colors.black),
+                calcButton('+', Colors.amber, Colors.white),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                FloatingActionButton(
+                  onPressed: () {
+                    calculation('0');
+                  },
+                  child: const Text(
+                    '0',
+                    style: TextStyle(fontSize: 25, color: Colors.white),
+                  ),
+                ),
+                calcButton('.', Colors.grey, Colors.white),
+                calcButton('=', Colors.amber, Colors.white),
+              ],
+            ),
+            const SizedBox(
+              height: 100,
+            ),
           ],
         ),
       ),
@@ -151,14 +225,32 @@ class _CalculatorState extends State<Calculator> {
     numOne = double.parse(result);
     return doesContainDecimal(result);
   }
-}
 
-String doesContainDecimal(dynamic result) {
-  if (result.toString().contains('.')) {
-    List<String> splitDecimal = result.toString().split('.');
-    if (!(int.parse(splitDecimal[1]) > 0)) {
-      return result = splitDecimal[0].toString();
-    }
+  String sub() {
+    result = (numOne - numTwo).toString();
+    numOne = double.parse(result);
+    return doesContainDecimal(result);
   }
-  return result;
+
+  String mul() {
+    result = (numOne * numTwo).toString();
+    numOne = double.parse(result);
+    return doesContainDecimal(result);
+  }
+
+  String div() {
+    result = (numOne / numTwo).toString();
+    numOne = double.parse(result);
+    return doesContainDecimal(result);
+  }
+
+  String doesContainDecimal(dynamic result) {
+    if (result.toString().contains('.')) {
+      List<String> splitDecimal = result.toString().split('.');
+      if (!(int.parse(splitDecimal[1]) > 0)) {
+        return result = splitDecimal[0].toString();
+      }
+    }
+    return result;
+  }
 }
