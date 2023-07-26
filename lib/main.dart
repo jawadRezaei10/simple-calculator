@@ -156,13 +156,12 @@ class _CalculatorState extends State<Calculator> {
   dynamic finalResult = '';
   dynamic opr = '';
   dynamic preOpr = '';
-
   void calculation(btnText) {
     if (btnText == 'AC') {
       text = '0';
       numOne = 0;
       numTwo = 0;
-      result = 0;
+      result = '';
       finalResult = '0';
       opr = '';
       preOpr = '';
@@ -186,7 +185,8 @@ class _CalculatorState extends State<Calculator> {
       } else {
         numTwo = double.parse(result);
       }
-      if (opr == "+") {
+
+      if (opr == '+') {
         finalResult = add();
       } else if (opr == '-') {
         finalResult = sub();
@@ -203,7 +203,7 @@ class _CalculatorState extends State<Calculator> {
       finalResult = doesContainDecimal(result);
     } else if (btnText == '.') {
       if (!result.toString().contains('.')) {
-        result = result.toString() + '.';
+        result = '$result.';
       }
       finalResult = result;
     } else if (btnText == '+/-') {
@@ -215,6 +215,7 @@ class _CalculatorState extends State<Calculator> {
       result = result + btnText;
       finalResult = result;
     }
+
     setState(() {
       text = finalResult;
     });
