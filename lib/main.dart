@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:simple_calculator/history.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final directory = await getApplicationDocumentsDirectory();
+  Hive.init(directory.path);
   runApp(const MyApp());
 }
 
@@ -24,10 +30,23 @@ class Calculator extends StatefulWidget {
 }
 
 class _CalculatorState extends State<Calculator> {
+  late final Box<List<String>> history;
+  late List<String> calcs;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () async {
+      history = await Hive.openBox<List<String>>('history');
+      calcs = history.get('calcs') ?? [];
+    });
+  }
+
   dynamic displaytxt = 20;
   Widget calcButton(String btntxt, Color btncolor, Color txtcolor) {
     return Container(
       child: FloatingActionButton(
+        backgroundColor: btncolor,
         onPressed: () {
           calculation(btntxt);
         },
@@ -42,10 +61,19 @@ class _CalculatorState extends State<Calculator> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.grey.shade900,
       appBar: AppBar(
         title: const Text('Calculator'),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.amber,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.history),
+            onPressed: () {
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => HistoryScreen()));
+            },
+          )
+        ],
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 30),
@@ -127,6 +155,7 @@ class _CalculatorState extends State<Calculator> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 FloatingActionButton(
+                  backgroundColor: Colors.grey,
                   onPressed: () {
                     calculation('0');
                   },
@@ -156,6 +185,16 @@ class _CalculatorState extends State<Calculator> {
   dynamic finalResult = '';
   dynamic opr = '';
   dynamic preOpr = '';
+
+  void saveResult(String result) {
+    print("saving");
+    if (finalResult != '' && opr != '') {
+      print("saved");
+      calcs.add('$numOne ${opr == '=' ? preOpr : opr} $numTwo = $result');
+      history.put('calcs', calcs);
+    }
+  }
+
   void calculation(btnText) {
     if (btnText == 'AC') {
       text = '0';
@@ -198,6 +237,7 @@ class _CalculatorState extends State<Calculator> {
       preOpr = opr;
       opr = btnText;
       result = '';
+      // if (btnText == '=') saveResult();
     } else if (btnText == '%') {
       result = numOne / 100;
       finalResult = doesContainDecimal(result);
@@ -223,24 +263,31 @@ class _CalculatorState extends State<Calculator> {
 
   String add() {
     result = (numOne + numTwo).toString();
+    saveResult(result);
     numOne = double.parse(result);
     return doesContainDecimal(result);
   }
 
   String sub() {
     result = (numOne - numTwo).toString();
+    saveResult(result);
+
     numOne = double.parse(result);
     return doesContainDecimal(result);
   }
 
   String mul() {
     result = (numOne * numTwo).toString();
+    saveResult(result);
+
     numOne = double.parse(result);
     return doesContainDecimal(result);
   }
 
   String div() {
     result = (numOne / numTwo).toString();
+    saveResult(result);
+
     numOne = double.parse(result);
     return doesContainDecimal(result);
   }
